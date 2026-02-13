@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>TEST CRUSHER · Ultimate</title>
+    <style>
+        * { box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        body { margin: 0; padding: 16px; transition: background 0.2s, color 0.2s; }
+        body.light { background: #f1f5f9; color: #0f172a; }
+        body.dark { background: #0f172a; color: #e2e8f0; }
+        .app { max-width: 800px; margin: 0 auto; background: var(--bg-card); border-radius: 32px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        body.light .app { background: white; }
+        body.dark .app { background: #1e293b; }
+        h1 { font-size: 2rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .credit { text-align: right; font-size: 0.9rem; color: #64748b; margin-bottom: 8px; }
+        body.dark .credit { color: #94a3b8; }
+        .tabs { display: flex; gap: 8px; margin: 20px 0; background: #e2e8f0; padding: 6px; border-radius: 100px; }
+        body.dark .tabs { background: #334155; }
+        .tab { flex: 1; padding: 12px; border: none; border-radius: 100px; background: transparent; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        body.light .tab { color: #475569; }
+        body.dark .tab { color: #cbd5e1; }
+        .tab.active { background: white; color: #0f172a; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        body.dark .tab.active { background: #0f172a; color: white; }
+        .card { background: var(--bg-card2); padding: 20px; border-radius: 24px; margin-bottom: 24px; }
+        body.light .card { background: #f8fafc; }
+        body.dark .card { background: #0f172a; border: 1px solid #334155; }
+        .stat-card { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .badge { background: #3b82f6; color: white; padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; }
+        .btn { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn:hover { background: #2563eb; }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-outline { background: transparent; border: 2px solid #3b82f6; color: #3b82f6; }
+        .btn-outline:hover { background: #3b82f6; color: white; }
+        .btn-sm { padding: 8px 16px; font-size: 0.9rem; }
+        .btn-icon { padding: 8px; border-radius: 50%; width: 40px; height: 40px; justify-content: center; }
+        .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .course-item, .subject-item { margin-bottom: 16px; border-radius: 20px; }
+        body.light .course-item { background: #ffffff; border: 1px solid #e2e8f0; }
+        body.dark .course-item { background: #1e293b; border: 1px solid #334155; }
+        .course-header, .subject-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .subject-header { padding-left: 32px; }
+        .course-actions, .subject-actions { display: flex; gap: 8px; }
+        .question-item { padding: 16px 16px 16px 48px; border-top: 1px solid #e2e8f0; }
+        body.dark .question-item { border-top-color: #334155; }
+        .question-text { font-weight: 600; margin-bottom: 8px; }
+        .choice-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 8px; margin: 8px 0; }
+        .choice { background: #f1f5f9; padding: 8px 12px; border-radius: 40px; font-size: 0.9rem; }
+        body.dark .choice { background: #334155; }
+        .choice.correct { background: #bbf7d0; color: #166534; font-weight: 600; }
+        body.dark .choice.correct { background: #166534; color: #bbf7d0; }
+        .difficulty-tag { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.8rem; font-weight: 600; background: #e2e8f0; }
+        body.dark .difficulty-tag { background: #334155; }
+        .easy { background: #bbf7d0; color: #166534; }
+        .medium { background: #fef9c3; color: #854d0e; }
+        .hard { background: #fecaca; color: #991b1b; }
+        .hidden { display: none !important; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: white; padding: 24px; border-radius: 32px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        body.dark .modal-content { background: #1e293b; color: #e2e8f0; }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 16px; border: 2px solid #e2e8f0; font-size: 1rem; }
+        body.dark .modal-content input, body.dark .modal-content select, body.dark .modal-content textarea { background: #0f172a; color: white; border-color: #334155; }
+        .timer { background: #1e293b; color: white; padding: 16px 24px; border-radius: 100px; display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+        .timer-warning { background: #b91c1c; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } }
+        .question-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 24px; padding: 20px; margin-bottom: 20px; }
+        body.dark .question-card { background: #0f172a; border-color: #334155; }
+        .choice-option { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; margin-bottom: 8px; cursor: pointer; }
+        body.dark .choice-option { background: #1e293b; border-color: #334155; }
+        .choice-option.selected { background: #dbeafe; border-color: #3b82f6; }
+        body.dark .choice-option.selected { background: #1e3a5f; }
+        .history-item { background: #f1f5f9; padding: 12px; border-radius: 16px; margin-bottom: 8px; }
+        body.dark .history-item { background: #1e293b; }
+        .search-bar { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-bar input { flex: 1; padding: 14px; border-radius: 40px; border: 2px solid #e2e8f0; }
+        body.dark .search-bar input { background: #0f172a; color: white; border-color: #334155; }
+        /* Test setup panel */
+        .test-setup { background: #f8fafc; padding: 20px; border-radius: 24px; }
+        body.dark .test-setup { background: #0f172a; border: 1px solid #334155; }
+        .test-setup select { width: 100%; padding: 14px; border-radius: 40px; border: 2px solid #e2e8f0; margin-bottom: 16px; font-size: 1rem; }
+        body.dark .test-setup select { background: #1e293b; color: white; border-color: #334155; }
+        .test-setup label { font-weight: 600; display: block; margin-bottom: 8px; }
+    </style>
+</head>
+<body class="light">
+    <div class="app">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>🧪 TEST CRUSHER</h1>
+            <button id="darkModeToggle" class="btn-icon btn-outline" style="width: auto; padding: 8px 16px;">🌙</button>
+        </div>
+        <div class="credit">Created by Bandele Kirsten</div>
+
+        <div class="tabs">
+            <button class="tab active" id="tabBank">📦 Bank</button>
+            <button class="tab" id="tabImport">📤 Import</button>
+            <button class="tab" id="tabTest">⏱️ Test</button>
+            <button class="tab" id="tabProgress">📊 Progress</button>
+        </div>
+
+        <!-- ========= BANK VIEW ========= -->
+        <div id="bankView">
+            <div class="stat-card">
+                <span class="badge">📊 TOTAL QUESTIONS</span>
+                <h2 id="totalQuestions">0</h2>
+            </div>
+            <div class="flex-row">
+                <button id="addCourseBtn" class="btn-success">➕ Add Course</button>
+                <button id="exportAllBtn" class="btn-outline">📤 Export All</button>
+                <button id="importPackageBtn" class="btn-outline">📥 Import Course Package</button>
+                <input type="file" id="packageFileInput" accept=".json" style="display:none;">
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Search questions...">
+                <button id="searchBtn" class="btn">Search</button>
+            </div>
+            <div id="coursesContainer"></div>
+        </div>
+
+        <!-- ========= IMPORT VIEW ========= -->
+        <div id="importView" class="hidden">
+            <div class="card">
+                <h2>📥 Bulk Import from Text</h2>
+                <p>Format: <code>Course | Subject | Question | A | B | C | D | Correct | Difficulty</code></p>
+                <textarea id="importText" rows="10" placeholder="Paste your questions here..."></textarea>
+                <div class="flex-row">
+                    <button id="importTxtBtn" class="btn">📋 Import Text</button>
+                    <button id="importFileBtn" class="btn-outline">📁 Upload .txt</button>
+                    <input type="file" id="txtFileInput" accept=".txt" style="display:none;">
+                </div>
+                <div class="flex-row" style="margin-top:20px;">
+                    <button id="loadSampleBtn" class="btn-outline">📚 Load Sample</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========= TEST VIEW ========= -->
+        <div id="testView" class="hidden">
+            <!-- Test setup panel (shown initially) -->
+            <div id="testSetupPanel" class="test-setup">
+                <h2>⚙️ Test Setup</h2>
+                <label>Subjects to include (hold Ctrl/Cmd to select multiple):</label>
+                <select id="testSubjectSelect" multiple size="4"></select>
+                <p class="text-sm">Leave empty to include all subjects</p>
+
+                <label>Number of questions:</label>
+                <select id="testQuestionCount">
+                    <option value="20">20 questions</option>
+                    <option value="30" selected>30 questions</option>
+                    <option value="40">40 questions</option>
+                    <option value="50">50 questions</option>
+                    <option value="60">60 questions</option>
+                </select>
+
+                <label>Time limit:</label>
+                <select id="testTimeLimit">
+                    <option value="10">10 minutes</option>
+                    <option value="20">20 minutes</option>
+                    <option value="30" selected>30 minutes</option>
+                    <option value="45">45 minutes</option>
+                    <option value="60">60 minutes</option>
+                </select>
+
+                <button id="startTestBtn" class="btn-success" style="font-size:1.2rem; padding:18px;">🚀 START TEST</button>
+            </div>
+
+            <!-- Test active panel (hidden until test starts) -->
+            <div id="testActivePanel" class="hidden">
+                <div id="timerDisplay" class="timer">
+                    <span>⏱️ Time</span>
+                    <span id="timeRemaining">30:00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                    <span class="badge" id="progressIndicator">1 / 30</span>
+                    <span class="badge" id="answeredCount">0 answered</span>
+                </div>
+                <div id="testQuestionsContainer"></div>
+                <div class="flex-row">
+                    <button id="testPrevBtn" class="btn-outline" disabled>◀ Previous</button>
+                    <button id="testNextBtn" class="btn-outline">Next ▶</button>
+                </div>
+                <button id="submitTestBtn" class="btn-success" style="margin-top: 20px; display: none;">✅ Submit Test</button>
+            </div>
+            <div id="testScoreCard" class="card" style="display: none; text-align: center;">
+                <h2>🎉 Test Complete!</h2>
+                <div style="font-size: 3rem; font-weight: 800;" id="finalScore">0%</div>
+                <button id="backToBankBtn" class="btn" style="margin-top: 20px;">📦 Back to Bank</button>
+            </div>
+        </div>
+
+        <!-- ========= PROGRESS VIEW ========= -->
+        <div id="progressView" class="hidden">
+            <h2>📈 Your Test History</h2>
+            <div id="historyList"></div>
+            <button id="clearHistoryBtn" class="btn-warning btn-sm">Clear History</button>
+        </div>
+
+        <!-- ========= EDIT / ADD MODALS ========= -->
+        <div id="editModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modalTitle">✏️ Edit Question</h2>
+                <input type="hidden" id="editQuestionId">
+                <input type="hidden" id="editCourseId">
+                <input type="hidden" id="editSubjectId">
+                <label>Course</label>
+                <select id="editCourseSelect"></select>
+                <label>Subject</label>
+                <select id="editSubjectSelect"></select>
+                <label>Question</label>
+                <textarea id="editText" rows="2"></textarea>
+                <label>Choice A</label>
+                <input type="text" id="editChoice0">
+                <label>Choice B</label>
+                <input type="text" id="editChoice1">
+                <label>Choice C</label>
+                <input type="text" id="editChoice2">
+                <label>Choice D</label>
+                <input type="text" id="editChoice3">
+                <label>Correct Answer</label>
+                <select id="editCorrect">
+                    <option value="0">A</option>
+                    <option value="1">B</option>
+                    <option value="2">C</option>
+                    <option value="3">D</option>
+                </select>
+                <label>Difficulty</label>
+                <select id="editDifficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+                <div class="flex-row">
+                    <button id="saveEditBtn" class="btn-success">Save</button>
+                    <button id="cancelEditBtn" class="btn-outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="addCourseModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>➕ Add Course</h2>
+                <label>Course Name</label>
+                <input type="text" id="newCourseName">
+                <div class="flex-row">
+                    <button id="createCourseBtn" class="btn-success">Create</button>
+                    <button id="cancelCourseBtn" class="btn-outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="addSubjectModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>➕ Add Subject</h2>
+                <input type="hidden" id="subjectCourseId">
+                <label>Subject Name</label>
+                <input type="text" id="newSubjectName">
+                <div class="flex-row">
+                    <button id="createSubjectBtn" class="btn-success">Create</button>
+                    <button id="cancelSubjectBtn" class="btn-outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="addQuestionModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>➕ Add Question</h2>
+                <input type="hidden" id="questionCourseId">
+                <input type="hidden" id="questionSubjectId">
+                <label>Question</label>
+                <textarea id="newQuestionText" rows="2"></textarea>
+                <label>Choice A</label>
+                <input type="text" id="newChoice0">
+                <label>Choice B</label>
+                <input type="text" id="newChoice1">
+                <label>Choice C</label>
+                <input type="text" id="newChoice2">
+                <label>Choice D</label>
+                <input type="text" id="newChoice3">
+                <label>Correct Answer</label>
+                <select id="newCorrect">
+                    <option value="0">A</option>
+                    <option value="1">B</option>
+                    <option value="2">C</option>
+                    <option value="3">D</option>
+                </select>
+                <label>Difficulty</label>
+                <select id="newDifficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+                <div class="flex-row">
+                    <button id="createQuestionBtn" class="btn-success">Create</button>
+                    <button id="cancelQuestionBtn" class="btn-outline">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA MODEL ==========
+        let courses = [];
+        let testHistory = [];
+        const STORAGE_COURSES = 'testCrusherCourses';
+        const STORAGE_HISTORY = 'testCrusherHistory';
+        const STORAGE_DARK = 'testCrusherDark';
+
+        // Test state
+        let currentTestQuestions = [];
+        let userAnswers = [];
+        let currentIndex = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let testInProgress = false;
+
+        // ========== DEFAULT COURSES – EDITED: "Mathematics" → "Maths" ==========
+        const DEFAULT_COURSES = [
+            {
+                id: 'c1',
+                name: 'Maths',
+                subjects: [
+                    {
+                        id: 's1',
+                        name: 'Trigonometry',
+                        questions: [
+                            { id: 'q1', text: 'If sin θ = 3/5 and θ is acute, what is cos θ?', choices: ['4/5','2/5','5/4','3/4'], correct: 0, difficulty: 'Medium' },
+                            { id: 'q2', text: 'If tan θ = 5/12, what is sin θ?', choices: ['5/13','12/13','5/12','13/5'], correct: 0, difficulty: 'Medium' }
+                        ]
+                    },
+                    {
+                        id: 's2',
+                        name: 'Algebra',
+                        questions: [
+                            { id: 'q3', text: 'If one root of x² - 3x + k = 0 is 2, find k', choices: ['2','4','6','8'], correct: 0, difficulty: 'Easy' },
+                            { id: 'q4', text: 'Solve: 2x + 5 = 13', choices: ['4','5','6','7'], correct: 0, difficulty: 'Easy' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'c2',
+                name: 'Physics',
+                subjects: [
+                    {
+                        id: 's3',
+                        name: 'Mechanics',
+                        questions: [
+                            { id: 'q5', text: 'What is the SI unit of force?', choices: ['Newton','Joule','Watt','Pascal'], correct: 0, difficulty: 'Easy' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // ========== UTILS ==========
+        function generateId() { return Date.now() + '-' + Math.random().toString(36).substr(2,9); }
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe.toString().replace(/[&<>"]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return '&quot;';
+            });
+        }
+
+        // ========== LOAD / SAVE ==========
+        function loadData() {
+            const storedCourses = localStorage.getItem(STORAGE_COURSES);
+            if (storedCourses) {
+                try { courses = JSON.parse(storedCourses); }
+                catch(e) { courses = []; }
+            }
+            if (!courses || courses.length === 0) {
+                courses = JSON.parse(JSON.stringify(DEFAULT_COURSES));
+            }
+            const storedHistory = localStorage.getItem(STORAGE_HISTORY);
+            if (storedHistory) {
+                try { testHistory = JSON.parse(storedHistory); }
+                catch(e) { testHistory = []; }
+            }
+            updateBankUI();
+            updateHistoryUI();
+            populateTestSubjectSelect();
+        }
+        function saveCourses() {
+            localStorage.setItem(STORAGE_COURSES, JSON.stringify(courses));
+            updateBankUI();
+            populateTestSubjectSelect();
+        }
+        function saveHistory() {
+            localStorage.setItem(STORAGE_HISTORY, JSON.stringify(testHistory));
+        }
+
+        // ========== UI RENDERING ==========
+        function updateBankUI() {
+            document.getElementById('totalQuestions').innerText = countAllQuestions();
+            renderCourses();
+            populateCourseSelects();
+        }
+
+        function countAllQuestions() {
+            let total = 0;
+            courses.forEach(c => c.subjects.forEach(s => total += s.questions.length));
+            return total;
+        }
+
+        function renderCourses(filterText = '') {
+            const container = document.getElementById('coursesContainer');
+            if (courses.length === 0) {
+                container.innerHTML = '<p>No courses yet. Click "Add Course" to start.</p>';
+                return;
+            }
+            let html = '';
+            courses.forEach(course => {
+                const courseId = course.id;
+                const courseName = escapeHtml(course.name);
+                let subjectHtml = '';
+                let subjectCount = 0;
+                course.subjects.forEach(subject => {
+                    const subjectId = subject.id;
+                    const subjectName = escapeHtml(subject.name);
+                    let questionHtml = '';
+                    let qCount = 0;
+                    subject.questions.forEach(q => {
+                        if (filterText && !q.text.toLowerCase().includes(filterText.toLowerCase())) return;
+                        qCount++;
+                        const qText = escapeHtml(q.text);
+                        const choicesHtml = q.choices.map((c, i) => {
+                            let cls = 'choice';
+                            if (i === q.correct) cls += ' correct';
+                            return `<span class="${cls}">${String.fromCharCode(65+i)}: ${escapeHtml(c)}</span>`;
+                        }).join(' ');
+                        const difficultyClass = q.difficulty ? q.difficulty.toLowerCase() : 'medium';
+                        questionHtml += `
+                            <div class="question-item" data-question-id="${q.id}" data-subject-id="${subjectId}" data-course-id="${courseId}">
+                                <div class="question-text">${qText}</div>
+                                <div class="choice-list">${choicesHtml}</div>
+                                <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                                    <span class="difficulty-tag ${difficultyClass}">${q.difficulty || 'Medium'}</span>
+                                    <button class="btn-outline btn-sm edit-question" data-qid="${q.id}" data-sid="${subjectId}" data-cid="${courseId}">✏️ Edit</button>
+                                    <button class="btn-warning btn-sm delete-question" data-qid="${q.id}" data-sid="${subjectId}" data-cid="${courseId}">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    if (filterText && qCount === 0) return;
+                    subjectCount++;
+                    questionHtml = questionHtml || '<div class="question-item">No questions</div>';
+                    subjectHtml += `
+                        <div class="subject-item" data-subject-id="${subjectId}">
+                            <div class="subject-header">
+                                <strong>📘 ${subjectName}</strong>
+                                <div class="subject-actions">
+                                    <button class="btn-outline btn-sm add-question" data-cid="${courseId}" data-sid="${subjectId}">➕ Add Question</button>
+                                    <button class="btn-warning btn-sm delete-subject" data-cid="${courseId}" data-sid="${subjectId}">🗑️ Subject</button>
+                                </div>
+                            </div>
+                            <div>${questionHtml}</div>
+                        </div>
+                    `;
+                });
+                if (filterText && subjectCount === 0) return;
+                html += `
+                    <div class="course-item" data-course-id="${courseId}">
+                        <div class="course-header">
+                            <strong>📚 ${courseName}</strong>
+                            <div class="course-actions">
+                                <button class="btn-outline btn-sm add-subject" data-cid="${courseId}">➕ Add Subject</button>
+                                <button class="btn-warning btn-sm delete-course" data-cid="${courseId}">🗑️ Course</button>
+                                <button class="btn-outline btn-sm export-course" data-cid="${courseId}">📤 Export</button>
+                            </div>
+                        </div>
+                        <div>${subjectHtml || '<div style="padding:16px;">No subjects</div>'}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // Attach event listeners (same as before)
+            document.querySelectorAll('.add-subject').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const cid = e.target.dataset.cid;
+                    openAddSubjectModal(cid);
+                });
+            });
+            document.querySelectorAll('.add-question').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const cid = e.target.dataset.cid;
+                    const sid = e.target.dataset.sid;
+                    openAddQuestionModal(cid, sid);
+                });
+            });
+            document.querySelectorAll('.edit-question').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const qid = e.target.dataset.qid;
+                    const sid = e.target.dataset.sid;
+                    const cid = e.target.dataset.cid;
+                    openEditModal(cid, sid, qid);
+                });
+            });
+            document.querySelectorAll('.delete-question').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (confirm('Delete this question?')) {
+                        const qid = e.target.dataset.qid;
+                        const sid = e.target.dataset.sid;
+                        const cid = e.target.dataset.cid;
+                        deleteQuestion(cid, sid, qid);
+                    }
+                });
+            });
+            document.querySelectorAll('.delete-subject').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (confirm('Delete this subject and all its questions?')) {
+                        const cid = e.target.dataset.cid;
+                        const sid = e.target.dataset.sid;
+                        deleteSubject(cid, sid);
+                    }
+                });
+            });
+            document.querySelectorAll('.delete-course').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (confirm('Delete this course and all its subjects/questions?')) {
+                        const cid = e.target.dataset.cid;
+                        deleteCourse(cid);
+                    }
+                });
+            });
+            document.querySelectorAll('.export-course').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const cid = e.target.dataset.cid;
+                    exportCourse(cid);
+                });
+            });
+        }
+
+        // ========== CRUD OPERATIONS ==========
+        function deleteQuestion(courseId, subjectId, questionId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            const subject = course.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            subject.questions = subject.questions.filter(q => q.id !== questionId);
+            saveCourses();
+        }
+        function deleteSubject(courseId, subjectId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            course.subjects = course.subjects.filter(s => s.id !== subjectId);
+            saveCourses();
+        }
+        function deleteCourse(courseId) {
+            courses = courses.filter(c => c.id !== courseId);
+            saveCourses();
+        }
+        function addCourse(name) {
+            if (!name.trim()) return;
+            courses.push({ id: generateId(), name: name.trim(), subjects: [] });
+            saveCourses();
+        }
+        function addSubject(courseId, name) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course || !name.trim()) return;
+            course.subjects.push({ id: generateId(), name: name.trim(), questions: [] });
+            saveCourses();
+        }
+        function addQuestion(courseId, subjectId, questionData) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            const subject = course.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            questionData.id = generateId();
+            subject.questions.push(questionData);
+            saveCourses();
+        }
+        function updateQuestion(courseId, subjectId, questionId, newData) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            const subject = course.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            const qIndex = subject.questions.findIndex(q => q.id === questionId);
+            if (qIndex === -1) return;
+            subject.questions[qIndex] = { ...subject.questions[qIndex], ...newData };
+            saveCourses();
+        }
+
+        // ========== MODAL HANDLERS ==========
+        function openAddCourseModal() {
+            document.getElementById('addCourseModal').classList.remove('hidden');
+        }
+        function openAddSubjectModal(courseId) {
+            document.getElementById('subjectCourseId').value = courseId;
+            document.getElementById('addSubjectModal').classList.remove('hidden');
+        }
+        function openAddQuestionModal(courseId, subjectId) {
+            document.getElementById('questionCourseId').value = courseId;
+            document.getElementById('questionSubjectId').value = subjectId;
+            document.getElementById('newQuestionText').value = '';
+            document.getElementById('newChoice0').value = '';
+            document.getElementById('newChoice1').value = '';
+            document.getElementById('newChoice2').value = '';
+            document.getElementById('newChoice3').value = '';
+            document.getElementById('newCorrect').value = '0';
+            document.getElementById('newDifficulty').value = 'Medium';
+            document.getElementById('addQuestionModal').classList.remove('hidden');
+        }
+        function openEditModal(courseId, subjectId, questionId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            const subject = course.subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+            const q = subject.questions.find(q => q.id === questionId);
+            if (!q) return;
+            document.getElementById('editCourseId').value = courseId;
+            document.getElementById('editSubjectId').value = subjectId;
+            document.getElementById('editQuestionId').value = questionId;
+            document.getElementById('editText').value = q.text;
+            document.getElementById('editChoice0').value = q.choices[0];
+            document.getElementById('editChoice1').value = q.choices[1];
+            document.getElementById('editChoice2').value = q.choices[2];
+            document.getElementById('editChoice3').value = q.choices[3];
+            document.getElementById('editCorrect').value = q.correct;
+            document.getElementById('editDifficulty').value = q.difficulty || 'Medium';
+            populateCourseSelects(courseId, subjectId);
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+        function populateCourseSelects(selectedCourseId = null, selectedSubjectId = null) {
+            const courseSelect = document.getElementById('editCourseSelect');
+            const subjectSelect = document.getElementById('editSubjectSelect');
+            courseSelect.innerHTML = '';
+            courses.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.name;
+                if (c.id === selectedCourseId) opt.selected = true;
+                courseSelect.appendChild(opt);
+            });
+            if (selectedCourseId) {
+                const course = courses.find(c => c.id === selectedCourseId);
+                if (course) {
+                    subjectSelect.innerHTML = '';
+                    course.subjects.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.name;
+                        if (s.id === selectedSubjectId) opt.selected = true;
+                        subjectSelect.appendChild(opt);
+                    });
+                }
+            }
+        }
+        document.getElementById('editCourseSelect').addEventListener('change', (e) => {
+            const courseId = e.target.value;
+            const course = courses.find(c => c.id === courseId);
+            const subjectSelect = document.getElementById('editSubjectSelect');
+            subjectSelect.innerHTML = '';
+            if (course) {
+                course.subjects.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.textContent = s.name;
+                    subjectSelect.appendChild(opt);
+                });
+            }
+        });
+
+        // ========== IMPORT / EXPORT ==========
+        function importFromTxt(text, append = true) {
+            if (!append) courses = [];
+            const lines = text.split('\n').filter(l => l.trim());
+            let imported = 0;
+            lines.forEach(line => {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length < 8) return;
+                const [courseName, subjectName, question, a, b, c, d, correctLetter, difficulty = 'Medium'] = parts;
+                let correctIndex = 0;
+                if (correctLetter.toUpperCase() === 'A') correctIndex = 0;
+                else if (correctLetter.toUpperCase() === 'B') correctIndex = 1;
+                else if (correctLetter.toUpperCase() === 'C') correctIndex = 2;
+                else if (correctLetter.toUpperCase() === 'D') correctIndex = 3;
+                let course = courses.find(c => c.name === courseName);
+                if (!course) {
+                    course = { id: generateId(), name: courseName, subjects: [] };
+                    courses.push(course);
+                }
+                let subject = course.subjects.find(s => s.name === subjectName);
+                if (!subject) {
+                    subject = { id: generateId(), name: subjectName, questions: [] };
+                    course.subjects.push(subject);
+                }
+                const exists = subject.questions.some(q => q.text === question);
+                if (exists) {
+                    if (!confirm(`Duplicate question detected in ${courseName} > ${subjectName}: "${question}". Add anyway?`)) return;
+                }
+                subject.questions.push({
+                    id: generateId(),
+                    text: question,
+                    choices: [a, b, c, d],
+                    correct: correctIndex,
+                    difficulty: difficulty
+                });
+                imported++;
+            });
+            if (imported > 0) {
+                saveCourses();
+                alert(`Imported ${imported} questions.`);
+            } else {
+                alert('No valid lines found.');
+            }
+        }
+
+        function exportAll() {
+            const dataStr = JSON.stringify(courses, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test_crusher_backup.json';
+            a.click();
+        }
+
+        function exportCourse(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+            const dataStr = JSON.stringify(course, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${course.name.replace(/\s+/g,'_')}.json`;
+            a.click();
+        }
+
+        function importPackage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedCourse = JSON.parse(e.target.result);
+                    if (!importedCourse.id || !importedCourse.name || !Array.isArray(importedCourse.subjects)) {
+                        alert('Invalid course package.');
+                        return;
+                    }
+                    const existing = courses.find(c => c.name === importedCourse.name);
+                    if (existing) {
+                        if (!confirm(`Course "${importedCourse.name}" already exists. Merge subjects?`)) return;
+                        importedCourse.subjects.forEach(impSub => {
+                            let existingSub = existing.subjects.find(s => s.name === impSub.name);
+                            if (!existingSub) {
+                                existing.subjects.push(impSub);
+                            } else {
+                                impSub.questions.forEach(q => {
+                                    if (!existingSub.questions.some(exq => exq.text === q.text)) {
+                                        existingSub.questions.push(q);
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        courses.push(importedCourse);
+                    }
+                    saveCourses();
+                    alert('Course package imported.');
+                } catch(err) {
+                    alert('Invalid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ========== SEARCH ==========
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const term = document.getElementById('searchInput').value.trim();
+            renderCourses(term);
+        });
+
+        // ========== TEST FUNCTIONS ==========
+        function populateTestSubjectSelect() {
+            const select = document.getElementById('testSubjectSelect');
+            select.innerHTML = '';
+            const allSubjects = [];
+            courses.forEach(c => {
+                c.subjects.forEach(s => {
+                    allSubjects.push({ courseName: c.name, subjectName: s.name, subjectId: s.id });
+                });
+            });
+            allSubjects.sort((a,b) => a.courseName.localeCompare(b.courseName) || a.subjectName.localeCompare(b.subjectName));
+            allSubjects.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.subjectId;
+                opt.textContent = `${sub.courseName} - ${sub.subjectName}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function startTest() {
+            // Get selected subject IDs
+            const select = document.getElementById('testSubjectSelect');
+            const selectedOptions = Array.from(select.selectedOptions).map(opt => opt.value);
+            let pool = [];
+            if (selectedOptions.length === 0) {
+                // No selection means use all subjects
+                courses.forEach(c => {
+                    c.subjects.forEach(s => {
+                        s.questions.forEach(q => {
+                            pool.push({ ...q, courseId: c.id, subjectId: s.id, courseName: c.name, subjectName: s.name });
+                        });
+                    });
+                });
+            } else {
+                // Filter by selected subject IDs
+                courses.forEach(c => {
+                    c.subjects.forEach(s => {
+                        if (selectedOptions.includes(s.id)) {
+                            s.questions.forEach(q => {
+                                pool.push({ ...q, courseId: c.id, subjectId: s.id, courseName: c.name, subjectName: s.name });
+                            });
+                        }
+                    });
+                });
+            }
+            if (pool.length < 20) {
+                alert(`Only ${pool.length} questions in selected subjects. Need at least 20.`);
+                return;
+            }
+            const qCount = parseInt(document.getElementById('testQuestionCount').value);
+            const shuffled = pool.sort(() => Math.random() - 0.5);
+            currentTestQuestions = shuffled.slice(0, Math.min(qCount, pool.length));
+            userAnswers = new Array(currentTestQuestions.length).fill(-1);
+            currentIndex = 0;
+            testInProgress = true;
+
+            // Switch to active test panel
+            document.getElementById('testSetupPanel').classList.add('hidden');
+            document.getElementById('testActivePanel').classList.remove('hidden');
+            document.getElementById('testScoreCard').style.display = 'none';
+            document.getElementById('submitTestBtn').style.display = 'none';
+
+            startTimer(parseInt(document.getElementById('testTimeLimit').value) * 60);
+            renderTestQuestion();
+        }
+
+        function startTimer(seconds) {
+            timeLeft = seconds;
+            updateTimerDisplay();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) submitTest();
+            }, 1000);
+        }
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timeRemaining').innerText = `${mins}:${secs.toString().padStart(2,'0')}`;
+            if (timeLeft < 300) document.getElementById('timerDisplay').classList.add('timer-warning');
+            else document.getElementById('timerDisplay').classList.remove('timer-warning');
+        }
+        function renderTestQuestion() {
+            if (!currentTestQuestions.length) return;
+            const q = currentTestQuestions[currentIndex];
+            document.getElementById('progressIndicator').innerText = `${currentIndex+1}/${currentTestQuestions.length}`;
+            document.getElementById('answeredCount').innerText = `${userAnswers.filter(a => a !== -1).length} answered`;
+            let html = `<div class="question-card"><div class="question-text">${escapeHtml(q.text)}</div>`;
+            q.choices.forEach((choice, idx) => {
+                html += `<div class="choice-option ${userAnswers[currentIndex] === idx ? 'selected' : ''}" onclick="selectAnswer(${currentIndex}, ${idx})">
+                            <span style="font-weight:700; margin-right:12px;">${String.fromCharCode(65+idx)}.</span>${escapeHtml(choice)}
+                        </div>`;
+            });
+            html += `</div>`;
+            document.getElementById('testQuestionsContainer').innerHTML = html;
+            document.getElementById('testPrevBtn').disabled = currentIndex === 0;
+            document.getElementById('testNextBtn').disabled = currentIndex === currentTestQuestions.length - 1;
+            document.getElementById('submitTestBtn').style.display = currentIndex === currentTestQuestions.length - 1 ? 'block' : 'none';
+        }
+        window.selectAnswer = function(qIdx, choiceIdx) {
+            userAnswers[qIdx] = choiceIdx;
+            renderTestQuestion();
+        };
+        function submitTest() {
+            clearInterval(timerInterval);
+            testInProgress = false;
+            let correct = 0;
+            currentTestQuestions.forEach((q, i) => { if (userAnswers[i] === q.correct) correct++; });
+            const percent = ((correct / currentTestQuestions.length) * 100).toFixed(1);
+            document.getElementById('finalScore').innerText = `${percent}%`;
+            document.getElementById('testScoreCard').style.display = 'block';
+            document.getElementById('submitTestBtn').style.display = 'none';
+            document.getElementById('testQuestionsContainer').innerHTML = '';
+
+            const courseNames = [...new Set(currentTestQuestions.map(q => q.courseName))];
+            const subjectNames = [...new Set(currentTestQuestions.map(q => q.subjectName))];
+            testHistory.push({
+                date: new Date().toLocaleString(),
+                score: correct,
+                total: currentTestQuestions.length,
+                percent,
+                courses: courseNames,
+                subjects: subjectNames
+            });
+            saveHistory();
+        }
+
+        // ========== PROGRESS ==========
+        function updateHistoryUI() {
+            const container = document.getElementById('historyList');
+            if (testHistory.length === 0) {
+                container.innerHTML = '<p>No test history yet.</p>';
+                return;
+            }
+            let html = '';
+            testHistory.slice().reverse().forEach(h => {
+                html += `<div class="history-item">
+                    <strong>${h.date}</strong> — ${h.score}/${h.total} (${h.percent}%)<br>
+                    <small>Courses: ${h.courses.join(', ')} | Subjects: ${h.subjects.join(', ')}</small>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ========== DARK MODE ==========
+        function initDarkMode() {
+            const saved = localStorage.getItem(STORAGE_DARK);
+            if (saved === 'dark') {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                document.getElementById('darkModeToggle').innerHTML = '☀️';
+            } else {
+                document.body.classList.add('light');
+                document.body.classList.remove('dark');
+                document.getElementById('darkModeToggle').innerHTML = '🌙';
+            }
+        }
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            if (document.body.classList.contains('light')) {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                localStorage.setItem(STORAGE_DARK, 'dark');
+                document.getElementById('darkModeToggle').innerHTML = '☀️';
+            } else {
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+                localStorage.setItem(STORAGE_DARK, 'light');
+                document.getElementById('darkModeToggle').innerHTML = '🌙';
+            }
+        });
+
+        // ========== TAB SWITCHING WITH WARNING ==========
+        function switchTab(tabId) {
+            if (testInProgress && tabId !== 'test') {
+                if (!confirm('Test in progress. Leave and lose progress?')) return false;
+                clearInterval(timerInterval);
+                testInProgress = false;
+                // Reset test panels
+                document.getElementById('testSetupPanel').classList.remove('hidden');
+                document.getElementById('testActivePanel').classList.add('hidden');
+                document.getElementById('testScoreCard').style.display = 'none';
+            }
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('bankView').classList.add('hidden');
+            document.getElementById('importView').classList.add('hidden');
+            document.getElementById('testView').classList.add('hidden');
+            document.getElementById('progressView').classList.add('hidden');
+
+            if (tabId === 'bank') {
+                document.getElementById('bankView').classList.remove('hidden');
+                document.getElementById('tabBank').classList.add('active');
+                updateBankUI();
+            } else if (tabId === 'import') {
+                document.getElementById('importView').classList.remove('hidden');
+                document.getElementById('tabImport').classList.add('active');
+            } else if (tabId === 'test') {
+                document.getElementById('testView').classList.remove('hidden');
+                document.getElementById('tabTest').classList.add('active');
+                // Ensure test panels are in correct state
+                if (!testInProgress) {
+                    document.getElementById('testSetupPanel').classList.remove('hidden');
+                    document.getElementById('testActivePanel').classList.add('hidden');
+                    document.getElementById('testScoreCard').style.display = 'none';
+                } else {
+                    // Test is in progress, show active panel
+                    document.getElementById('testSetupPanel').classList.add('hidden');
+                    document.getElementById('testActivePanel').classList.remove('hidden');
+                }
+            } else if (tabId === 'progress') {
+                document.getElementById('progressView').classList.remove('hidden');
+                document.getElementById('tabProgress').classList.add('active');
+                updateHistoryUI();
+            }
+            return true;
+        }
+
+        // ========== EVENT LISTENERS ==========
+        document.getElementById('tabBank').addEventListener('click', () => switchTab('bank'));
+        document.getElementById('tabImport').addEventListener('click', () => switchTab('import'));
+        document.getElementById('tabTest').addEventListener('click', () => switchTab('test'));
+        document.getElementById('tabProgress').addEventListener('click', () => switchTab('progress'));
+
+        document.getElementById('addCourseBtn').addEventListener('click', openAddCourseModal);
+        document.getElementById('cancelCourseBtn').addEventListener('click', () => {
+            document.getElementById('addCourseModal').classList.add('hidden');
+        });
+        document.getElementById('createCourseBtn').addEventListener('click', () => {
+            const name = document.getElementById('newCourseName').value.trim();
+            if (name) {
+                addCourse(name);
+                document.getElementById('newCourseName').value = '';
+                document.getElementById('addCourseModal').classList.add('hidden');
+            }
+        });
+        document.getElementById('cancelSubjectBtn').addEventListener('click', () => {
+            document.getElementById('addSubjectModal').classList.add('hidden');
+        });
+        document.getElementById('createSubjectBtn').addEventListener('click', () => {
+            const courseId = document.getElementById('subjectCourseId').value;
+            const name = document.getElementById('newSubjectName').value.trim();
+            if (name) {
+                addSubject(courseId, name);
+                document.getElementById('newSubjectName').value = '';
+                document.getElementById('addSubjectModal').classList.add('hidden');
+            }
+        });
+        document.getElementById('cancelQuestionBtn').addEventListener('click', () => {
+            document.getElementById('addQuestionModal').classList.add('hidden');
+        });
+        document.getElementById('createQuestionBtn').addEventListener('click', () => {
+            const courseId = document.getElementById('questionCourseId').value;
+            const subjectId = document.getElementById('questionSubjectId').value;
+            const text = document.getElementById('newQuestionText').value.trim();
+            const choices = [
+                document.getElementById('newChoice0').value.trim(),
+                document.getElementById('newChoice1').value.trim(),
+                document.getElementById('newChoice2').value.trim(),
+                document.getElementById('newChoice3').value.trim()
+            ];
+            const correct = parseInt(document.getElementById('newCorrect').value);
+            const difficulty = document.getElementById('newDifficulty').value;
+            if (!text || choices.some(c => !c)) {
+                alert('Please fill all fields.');
+                return;
+            }
+            addQuestion(courseId, subjectId, { text, choices, correct, difficulty });
+            document.getElementById('addQuestionModal').classList.add('hidden');
+        });
+        document.getElementById('saveEditBtn').addEventListener('click', () => {
+            const courseId = document.getElementById('editCourseSelect').value;
+            const subjectId = document.getElementById('editSubjectSelect').value;
+            const questionId = document.getElementById('editQuestionId').value;
+            const text = document.getElementById('editText').value.trim();
+            const choices = [
+                document.getElementById('editChoice0').value.trim(),
+                document.getElementById('editChoice1').value.trim(),
+                document.getElementById('editChoice2').value.trim(),
+                document.getElementById('editChoice3').value.trim()
+            ];
+            const correct = parseInt(document.getElementById('editCorrect').value);
+            const difficulty = document.getElementById('editDifficulty').value;
+            if (!text || choices.some(c => !c)) {
+                alert('Please fill all fields.');
+                return;
+            }
+            updateQuestion(courseId, subjectId, questionId, { text, choices, correct, difficulty });
+            document.getElementById('editModal').classList.add('hidden');
+        });
+        document.getElementById('cancelEditBtn').addEventListener('click', () => {
+            document.getElementById('editModal').classList.add('hidden');
+        });
+
+        // Export all
+        document.getElementById('exportAllBtn').addEventListener('click', exportAll);
+
+        // Import package
+        document.getElementById('importPackageBtn').addEventListener('click', () => {
+            document.getElementById('packageFileInput').click();
+        });
+        document.getElementById('packageFileInput').addEventListener('change', (e) => {
+            if (e.target.files[0]) importPackage(e.target.files[0]);
+        });
+
+        // Import txt
+        document.getElementById('importTxtBtn').addEventListener('click', () => {
+            const text = document.getElementById('importText').value;
+            if (text.trim()) importFromTxt(text);
+        });
+        document.getElementById('importFileBtn').addEventListener('click', () => {
+            document.getElementById('txtFileInput').click();
+        });
+        document.getElementById('txtFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => importFromTxt(ev.target.result);
+                reader.readAsText(file);
+            }
+        });
+        document.getElementById('loadSampleBtn').addEventListener('click', () => {
+            const sample = `Maths | Trigonometry | If sin θ = 3/5, find cos θ | 4/5 | 2/5 | 5/4 | 3/4 | A | Medium
+Maths | Algebra | Solve 2x + 5 = 13 | 4 | 5 | 6 | 7 | A | Easy
+Physics | Mechanics | What is the SI unit of force? | Newton | Joule | Watt | Pascal | A | Easy`;
+            document.getElementById('importText').value = sample;
+        });
+
+        // Test navigation
+        document.getElementById('startTestBtn').addEventListener('click', startTest);
+        document.getElementById('testPrevBtn').addEventListener('click', () => {
+            if (currentIndex > 0) { currentIndex--; renderTestQuestion(); }
+        });
+        document.getElementById('testNextBtn').addEventListener('click', () => {
+            if (currentIndex < currentTestQuestions.length - 1) { currentIndex++; renderTestQuestion(); }
+        });
+        document.getElementById('submitTestBtn').addEventListener('click', submitTest);
+        document.getElementById('backToBankBtn').addEventListener('click', () => switchTab('bank'));
+
+        // Clear history
+        document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+            if (confirm('Clear all test history?')) {
+                testHistory = [];
+                saveHistory();
+                updateHistoryUI();
+            }
+        });
+
+        // Close modals if click outside
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModal')) document.getElementById('editModal').classList.add('hidden');
+        });
+        document.getElementById('addCourseModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('addCourseModal')) document.getElementById('addCourseModal').classList.add('hidden');
+        });
+        document.getElementById('addSubjectModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('addSubjectModal')) document.getElementById('addSubjectModal').classList.add('hidden');
+        });
+        document.getElementById('addQuestionModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('addQuestionModal')) document.getElementById('addQuestionModal').classList.add('hidden');
+        });
+
+        // Initialize
+        loadData();
+        initDarkMode();
+    </script>
+</body>
+</html>
